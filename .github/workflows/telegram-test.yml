@@ -20,8 +20,8 @@ jobs:
           import json
           import urllib.request
 
-          token = os.environ["BOT_TOKEN"]
-          chat_id = os.environ["CHAT_ID"]
+          token = os.environ["BOT_TOKEN"].strip()
+          chat_id = os.environ["CHAT_ID"].strip()
 
           url = f"https://api.telegram.org/bot{token}/sendMessage"
 
