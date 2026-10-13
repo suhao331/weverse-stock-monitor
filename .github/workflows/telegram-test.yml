@@ -1,0 +1,53 @@
+
+name: Test Telegram Notification
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-telegram:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Send Telegram test message
+        env:
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python - <<'PY'
+          import os
+          import json
+          import urllib.request
+
+          token = os.environ["BOT_TOKEN"]
+          chat_id = os.environ["CHAT_ID"]
+
+          url = f"https://api.telegram.org/bot{token}/sendMessage"
+
+          payload = json.dumps({
+              "chat_id": chat_id,
+              "text": (
+                  "✅ Weverse 库存监控测试成功！\n\n"
+                  "商品：SEVENTEEN Plush Toy\n"
+                  "监控范围：13款角色\n"
+                  "通知渠道：Telegram\n\n"
+                  "这是测试消息，并非真实补货提醒。"
+              )
+          }).encode("utf-8")
+
+          request = urllib.request.Request(
+              url,
+              data=payload,
+              headers={"Content-Type": "application/json"},
+              method="POST"
+          )
+
+          with urllib.request.urlopen(request, timeout=20) as response:
+              result = json.load(response)
+
+          if not result.get("ok"):
+              raise RuntimeError("Telegram notification failed")
+
+          print("Telegram notification sent successfully")
+          PY
