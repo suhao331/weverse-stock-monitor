@@ -1,0 +1,22 @@
+
+name: Test Weverse Stock Monitor
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-stock:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run stock test
+        run: python check_stock.py
